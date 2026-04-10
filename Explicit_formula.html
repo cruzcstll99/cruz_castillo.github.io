@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Explicit Formulas in Number Theory</title>
+	<script src="https://sagecell.sagemath.org/static/jquery.min.js"></script><script src="https://sagecell.sagemath.org/embedded_sagecell.js"></script><script>
+      $(function () {
+        // Make *any* div with class 'compute' a Sage cell
+        sagecell.makeSagecell({
+          inputLocation: "div.compute",
+          template: sagecell.templates.minimal,
+          evalButtonText: "Launch the Interactive Applet Now",
+        });
+      });
+    </script><script>
+      MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+        },
+        svg: {
+          fontCache: "global",
+        },
+      };
+    </script><script
+      type="text/javascript"
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+    ></script>
+</head>
+<body autocomplete="off">
+<h1>Explicit Formulas Related to the Riemann $\zeta$ function</h1>
+
+<p><b>This website is still under construction, so there are probably some errors. Corrections are welcome.</b><br />
+The Riemann zeta is most important function in number theory. The purpose of this interactive website is to illustrate the importance of its zeros to prime numbers.</p>
+
+<hr />
+<h2>Prime counting functions</h2>
+
+<p>In this interactive website, we will consider three functions that we collectively call prime counting functions. We will be looking at the prime counting function $\pi(x),$ and Chebyshev&#39;s $\theta(x),\psi(x)$ functions. Each of these functions functions are defined below. Each section contains at least one interactive plot; to run the interactive plot simply press the &quot;Launch the Interactive Applet Now&quot; button. The interactive plots are made from Sagemath.</p>
+
+<h3>The prime counting function: $\pi(x)$</h3>
+
+<p>First, we consider the prime counting function $\pi(x)$ which is the number of primes less than $x.$ For example, $\pi(4.5) = 2$ because the primes less than 4.5 are 2 and 3. Please run the applet below to see a graph of $\pi(x)$ in the range with minimum 0 and maximum $X.$ The slider called $X$ changes the maximum. To better see how $\pi(x)$ changes values at primes, there is an option to plot $\pi(x)$ at primes.This applet also can plot $x^{\alpha}$ for $\alpha = \{1/2,7/10,3/4,1\}.$ The goal of this is to see how $\pi(x)$ grows with $x.$</p>
+
+<div class="compute"><!--Do not make this indented;it will fail.--><script type="text/x-sage">
+P = Primes()
+@interact
+def plot_prime(X=slider([10,100,500,1000,1500,2000,2500,5000], label = r"$X$"),  α = slider([1/2,7/10,3/4,1]), frame1 = checkbox(False, label= r'$x^{\alpha}$'),frame2 = checkbox(False,label ="primes")):
+  alpha = α
+  def power_alpha(x):
+    return x^alpha
+  p1 = plot(prime_pi,0,X, legend_label = r'$\pi(x)$')
+  if frame1 == True:
+    p1+= plot(power_alpha,(x,0,X), legend_label = r"$x^{\alpha},\alpha =$" + "{}".format(alpha),color = "red")
+  if frame2 == True:
+    p1 += list_plot([(i,prime_pi(i)) for i in P[0:prime_pi(X)]], legend_label = "primes", color = "black", size = 30)
+  p1.show()
+</script></div>
+
+<p>As one can see that for all values of intervals plotted $ \pi(x) \leq x.$ This is the consequence of the fact that not all integers are primes; moreover, one can see that for the other powers graphed eventually $\pi(x)$ overtook them. We will see why is this so later on.</p>
+
+<h3>Chebyshev&#39;s functions</h3>
+
+<p>Before defining the Chebyshev functions. We define a standard notation in analytic number theory: $$\sum_{n \leq X}f(n) = \sum_{n = 1}^{\lfloor X \rfloor}f(n) = f(1) + f(2) + \cdots + f(\lfloor X \rfloor),$$ where $\lfloor X \rfloor$ is the <a href="https://en.wikipedia.org/wiki/Floor_and_ceiling_functions">floor</a> function(the greatest integer less than X). Furthermore, if we wan to just sum over primes; it is very common to write simply $$\sum_{p \leq X}f(p) = f(2) + f(3) + \cdots + f(p_{\pi(X)}),$$ where $p_{n}$ denotes the nth prime. For example, $\pi(x) = \sum_{p \leq x} 1.$ Using this, we define $\theta(x),$ $$\theta(x) = \sum_{p \leq x} \ln(p) = \ln(2) + \ln(3) +\cdots + \ln(p_{\pi(x)}).$$ For example, $\theta(6) = \ln(2) + \ln(3) + \ln(5) \approx 3.4.$ By this definition, $\theta(x)$ is the sum over primes weighted by $\ln(p).$ The next function we define is $\psi(x),$ to do so we let $$\Lambda(n)=\begin{cases}\ln(p) &amp; \text{ if } n = p^k\\&nbsp; 0 &amp; \text{o.w.} \end{cases}.$$ Functions that are only non-zero on prime powers or one are normally said to be supported on prime powers; $\Lambda$ is one such example. Now, we define $$ \psi(x) = \sum_{n \leq x} \Lambda(n).$$ Taking $x &gt; 7,$ we have $$\psi(x) = \sum_{n \leq x} \Lambda(n) = \Lambda(2) + \Lambda(3) + \Lambda(4) + \Lambda(5) + \Lambda(7) + \cdots = \ln(2) + \ln(3) + \ln(2) + \ln(5) +\ln(7) +\cdots.$$ Again, please run the applet below to see the graphs of $\theta(x),\psi(x),$ $x^\alpha.$ You can change the range and click to graph whichever function you like and to include the values of $\theta$ and $\psi$ at primes or prime powers.</p>
+
+<div class="compute"><script type="text/x-sage">
+P = Primes()
+def theta(x):
+  return sum([log(p) for p in P[0:prime_pi(x)]])
+def psi(x):
+    pi_x = prime_pi(x)
+    return sum([floor(log(x,p))*log(p) for p in P[0:pi_x]])
+def prime_powers_up_theta(x):
+    return [(i,theta(i)) for i in P[0:prime_pi(x)]]
+def prime_powers_up_psi(x):
+  return [(i,psi(i)) for i in IntegerRange(1,x) if i.is_prime_power() == True]
+@interact
+def psi_vs_approx(T= slider([10,100,500],label = r"$X$"),α = slider([3/4,1] ,label = r"$\alpha$"),frame1 = checkbox(True, label=r'$\theta(x)$'), frame2 = checkbox(False, label=r'$\psi(x)$'), frame3 = checkbox(False, label =r'$x^{\alpha}$'),frame4 = checkbox(False,label ="prime/prime powers")):
+  alpha = α
+  p1 = plot(0,(x,0,T), color = "black")
+  def power_alpha(x):
+    return x^alpha
+  if frame1 == True:
+      p1 +=  plot(theta, (x,0,T),legend_label = r'$\theta(x)$', color = "blue")
+      if frame4 == True:
+        p1 += list_plot(prime_powers_up_theta(T), legend_label = "primes", color = "purple",size = 30)
+  if frame2 == True:
+      p1 +=  plot(psi, (x,0,T),legend_label = r'$\psi(x)$', color = "red")
+      if frame4 == True:
+        p1 += list_plot(prime_powers_up_psi(T), legend_label = "prime powers", color = "black", size = 30)
+  if frame3 == True:
+      p1 += plot(power_alpha,(x,0,T), legend_label = r"$x^{\alpha},\alpha =$" + "{}".format(alpha),color = "green")  
+  p1.set_legend_options(shadow=False, loc=2)
+  p1.show()
+</script></div>
+
+<p>As you can see in the graphs $\psi(x),\theta(x)$ seem to have size really close to $x.$ In turns out, this is the case.</p>
+
+<h3>The prime number theorem</h3>
+
+<p>The prime number theorem tells us the asymptotic behavior of $\pi(x),\theta(x),$ and $\psi(x).$ The prime number theorem in its simpliest form is $$ \lim_{x \to \infty} \frac{\pi(x)\ln(x)}{x} = \lim_{x\to \infty} \frac{\pi(x)}{\frac{x}{\ln(x)}} = 1,$$ this tells us that $\pi(x)$ grows like $\frac{x}{\ln(x)}.$ In fact, we actually have better approximation for $\pi(x),$ $$ \text{Li}(x) = \int_{2}^{x} \frac{dt}{\ln(t)}.$$ Note that this integral starts at 2. This is to avoid when $\ln(1) = 0.$ Please run the applet below to see the comparison. Simply click on which function you would like to plot. Again, the slider $X$ increases the max value for which the functions are plotted.</p>
+
+<div class="compute"><!--Do not make this indented;it will fail.--><script type="text/x-sage">
+P = Primes()
+@interact
+def plot_prime(X=slider([10,100,500,1000,1500,2000,2500,5000], label = r"$X$"), frame1 = checkbox(False, label= r'$\frac{x}{\ln(x)}$'),frame2 = checkbox(False, label= r'$\int_2^{x}\frac{dt}{\ln(t)}$'),frame3= checkbox(False,label ="primes")):
+  def xoverlog(x):
+    return x/log(x)
+  p1 = plot(prime_pi,2,X, legend_label = r'$\pi(x)$')
+  if frame1 == True:
+    p1+= plot(xoverlog,(x,2,X), legend_label = r"$\frac{x}{\ln(x)}$",color = "red")
+  if frame2 == True:
+    p1+= plot(log_integral,(x,2,X), legend_label = r"$\int_{2}^{x} \frac{dt}{\ln(t)}$",color = "green")
+  if frame3 == True:
+    p1 += list_plot([(i,prime_pi(i)) for i in P[0:prime_pi(X)]], legend_label = "primes", color = "black", size = 30)
+  p1.show()
+</script></div>
+
+<p>In fact the prime number theorem tells us that for any $0 \leq \alpha &lt; 1$, $$ \lim_{x \to \infty} \frac{\pi(x)}{x^{\alpha}} = \lim_{x\to \infty} \frac{\frac{x}{\ln(x)}}{\frac{x}{\ln(x)}} \frac{\pi(x)}{x^{\alpha}} = \lim_{x \to \infty} \frac{\pi(x)\ln(x)}{x} \frac{x^{1-\alpha}}{\ln(x)} = \infty.$$ This limit diverges because $\lim_{x \to \infty} \frac{\pi(x)\ln(x)}{x} = 1$ and $\lim_{x \to \infty}\frac{x^{1-\alpha}}{\ln(x)} = \infty$ by L&#39;H&ocirc;pital&#39;s rule. This tells us that $\pi(x)$ is eventually larger than any $x^{\alpha}$ for any $\alpha \in [0,1).$ It turns out that the prime number theorem tells us the asymptotic behavior of $\theta,$ and $\psi$ as well because the following are equivalent \begin{align} &amp; \lim_{x\to \infty} \frac{\pi(x)\ln(x)}{x} = 1\\ &amp; \lim_{x\to \infty} \frac{\theta(x)}{x} = 1 \\ &amp; \lim_{x \to \infty} \frac{\psi(x)}{x} = 1. \end{align} This tells us that if $\pi(x)$ grows like $\frac{x}{\ln(x)}$ then $\theta(x)$ and $\psi(x)$ grow like $x$ and vice-versa.</p>
+
+<h2>Riemmann zeta function and its zeros</h2>
+
+<p>The Riemann zeta function is defined in the following way, $$ \zeta(s) = \sum_{n =1}^{\infty} \frac{1}{n^s}, $$ where we take $s$ to be a real number greater than 1, which by the integral test we have this sum converges: $\int_{1}^{\infty} x^{s}dx = \frac{1}{1+s}x^{s+1}|_{1}^{\infty} = \frac{1}{1+s},$ if $s&gt;1.$ On the otherhand, when $s=1$ we have $$\zeta(s) = \sum_{n =1}^{\infty} \frac{1}{n},$$ but this diverges by the integral test $(\int_{1}^{x}\frac{dx}{x} = \ln(x)).$ Therefore, we can only define $\zeta(s)$ as the sum above when $s &gt;1.$ Despite this barrier, we can still define $\zeta(s)$ for $s &gt;0.$ It turns out that for $s&gt;1,$ $$\zeta(s) = \sum_{n = 1}^{\infty}\frac{1}{n^s} = \frac{s}{s-1} -s \int_{1}^{\infty}(x - \lfloor x\rfloor)x^{-s-1}dx.$$ This gives another defintion of the $\zeta$ function. The left hand side of the equation above can be understood for $s \in (0,\infty).$ This is an example of what is called analytic continuation. Here is a graph of $\zeta(s)$ for $s$ in various ranges</p>
+
+<div class="compute"><!--Do not make this indented;it will fail.--><script type="text/x-sage">
+@interact
+def plot_prime(Frame1 = checkbox(True, label= r'$[0,2]$'),Frame2 = checkbox(False, label= r'$[2,50]$')):
+  if Frame1:
+    p1 = plot(zeta,(x,0,2), color = "red")
+    p1.show()
+  else:
+    p1 = plot(zeta,(x,2,50), color = "red")
+    p1.show()
+</script></div>
+
+<p>As you can see in the graph there is a vertical asymptote at $s = 1.$ In analytic number theory, we call this point a pole. It turns out this pole plays an essential role in applications of the Riemann zeta to arithmetic functions. This will be discussed in the section on explicit formulas below. The last thing, I would like to talk about the behavoir of $\zeta$ in the second range. It seems that $\zeta(s)\to 1$ as $s \to \infty,$ which is actually true. It turns out the way we should be thinking about this function as a funciton of complex variable. This is a function $f$ that takes in a complex number $x+iy$ and returns a complex number. One way of thinking about is the following $$f(x+iy) = u(x,y) +iv(x,y),$$ where $u(x,y)$ and $v(x,y)$ are function of two real variables like in Calculus 3. In particular, you can think of $f$ as function from $\mathbb{R}^2 \to \mathbb{R}^2.$ Here, is a heat map of $\zeta(s).$ You can increase up to which height $\zeta$ is plotted. This graph can be also seen on Sagemath&#39;s page on <a href="https://doc.sagemath.org/html/en/reference/plotting/sage/plot/complex_plot.html">Complex Plots</a>.</p>
+
+<div class="compute"><!--Do not make this indented;it will fail.--><script type="text/x-sage">
+@interact
+def plot_prime(X=slider([10,15,25],label = "Height")):
+  p1 = complex_plot(zeta,(-X,X),(-X,X))
+  p1.show()
+</script></div>
+
+<p>In the above graph, on the line with real part $\frac{1}{2}$ the $\zeta(s)$ seems to be acting strangely. It turns out this behavior corresponds to the zeros of $\zeta(s).$ In his memior in 1860, Riemann conjectured that all the zeros with real part in $[0,1]$ lie on this line. This is still unknown to this day. We have calculated at least 103,800,788,359 zeros in this region, and every single one of them have real part $\frac{1}{2}.$ For example, we have the first zero being at around $\frac{1}{2} + 14.1347251417i,$ which can be seen in the graph above. To see more values of the zeros see the L-functions Modular Forms Database&#39;s <a href="https://www.lmfdb.org/zeros/zeta/">webpage</a> on this. In fact, this is one of the most coveted open conjecture in mathematics. So much so, that it is one of the <a href="https://www.claymath.org/millennium-problems/">Millenium</a> problems from the Clay Institute. The zeros of $\zeta$ have a myraid of applications althougout number theory, but the most classical one is to prime numbers which is the focus of this page, and its final section.</p>
+
+<h2>Explicit formula for Chebesevy&#39;s $\psi$ function</h2>
+
+<p>Due to complex analysis, we have the astounding connection between the zeros of the $\zeta$ and the prime counting functions described above. We highlight the connection with the $\psi.$ Although, we do not know whether all the zeros of $\zeta$ have real part $\frac{1}{2},$ we do know there are infinitely many of them. Let $z_n = x_n +iy_n$ be the nth zero of $\zeta.$ With this, we have for $x &gt;1,$ $$ \psi(x) = \begin{cases} \displaystyle x + \frac{1}{2}\ln(x)- \sum_{n=1}^{\infty} \frac{x^{z_n}}{z_n} - \ln(2 \pi) - \frac{1}{2}\ln(1-x^{-2})&amp; \text{ if } x = p^k \\ \displaystyle x - \sum_{n=1}^{\infty} \frac{x^{z_n}}{z_n} -\ln(2 \pi) - \frac{1}{2}\ln(1-x^{-2})&amp; \text{ o.w.} \end{cases} $$ As mentioned earlier, the pole at $s=1$ plays a major role in the formula above; namely it is where the $x$ term above arrives. Additionally, using this formula, we can approximate the $\psi$ function using the zeros of $\zeta.$ We define our approximation of the $\psi$ function as $$\tilde{\psi}(x,N) = \begin{cases} \displaystyle x + \frac{1}{2}\ln(x)- \sum_{n=1}^{N} \frac{x^{z_n}}{z_n} - \ln(2 \pi) - \frac{1}{2}\ln(1-x^{-2})&amp; \text{ if } x = p^k \\ \displaystyle x - \sum_{n=1}^{N} \frac{x^{z_n}}{z_n} -\ln(2 \pi) - \frac{1}{2}\ln(1-x^{-2})&amp; \text{ o.w.} \end{cases}.$$ In the applet below, you can compare $\psi(x)$ and $\tilde{\psi}(x)$ in various ranges. Moreover, you can change the number of zeros in the sum for $\tilde{\psi(x)}.$ Finally, you chose to plot the points $(p^k,\psi(p^k))$ by clicking the prime powers button.</p>
+
+<div class="compute"><!--Do not make this indented;it will fail.--><script type="text/x-sage">
+import numpy as np
+zz = zeta_zeros()
+P = Primes()
+def prime_powers_up_psi(x):
+  return [(i,psi(i)) for i in IntegerRange(1,x) if i.is_prime_power() == True]
+def prime_powers_up_psi_rang(x):
+  return [(i,psi(i)) for i in IntegerRange(x,x+100) if i.is_prime_power() == True]
+def psi(x):
+  pi_x = prime_pi(x)
+  return sum([floor(log(x,p))*log(p) for p in P[0:pi_x]])
+def psi_approx(x,zero_array):
+  i = 1j
+  sum1 = x**(1/2+i*zero_array)/(1/2+i*zero_array)
+  sum2 = x**(1/2-i*zero_array)/(1/2-i*zero_array)
+  extra = 0
+  if x.is_integer():
+    x = int(x)
+    x = Integer(x)
+    if x.is_prime_power():
+      extra = .5*np.log(x) 
+  return x + extra - np.log(2*np.pi) - (np.sum(sum1+sum2)).real - np.log(1-x**(-2))/2
+  
+@interact
+def psi_explicit_plot(X=slider([10,100,200,300,400,500],label = "Range"),T=slider([10,50,100,250,500,750,1000], label = "Number of zeros"), frame1 = checkbox(False, label= 'Explicit Formula'),frame2= checkbox(False,label ="prime powers")):
+  zeros = np.array(zz[0:T])
+  def psi_explicit(x):
+    return psi_approx(x,zeros)
+  if X == 10:
+    p1 = plot(psi,(x,2,10), legend_label = r'$\psi(x)$')
+    if frame1 == True:
+      p1+= plot(psi_explicit,(x,2,10), legend_label = r"$\tilde{\psi}(x)$",color = "red")
+    if frame2 == True:
+      p1 += list_plot(prime_powers_up_psi(X), legend_label = "prime powers", color = "black", size = 30)
+    p1.show()
+    return 
+  p1 = plot(psi,(x,X,X+100), legend_label = r'$\psi(x)$')
+  if frame1 == True:
+    p1+= plot(psi_explicit,(x,X,X+100), legend_label = r"$\tilde{\psi}(x)$",color = "red")
+  if frame2 == True:
+    p1 += list_plot(prime_powers_up_psi_rang(X), legend_label = "prime powers", color = "black", size = 30)
+  print("hi")
+  p1.show()
+</script></div>
+
+<p>In the graph, if you fix the number of zeros and change the range to have large x, the approximation becomes less accurate. On the other hand, if you fix the range and increase the number of zeros the approximation becomes better. This is similiar to increasing the number of terms in a fourier series.</p>
+
+<h2>Conclusion</h2>
+
+<p>Thank you for working through these interactive examples. I hope you enjoyed working through this examples. If you are interested in learning more, I suggest reading Tom M. Apostol&#39;s wonderful introductory book on the subject: <a href="https://link.springer.com/book/10.1007/978-1-4757-5579-4">Introduction to Analytic Number Theory</a>. I would also like to thank the NSF for my graduate research fellowship.</p>
+</body>
+</html>
