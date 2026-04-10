@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Modular Forms </title>
+    <script src="https://sagecell.sagemath.org/static/jquery.min.js"></script>
+    <script src="https://sagecell.sagemath.org/embedded_sagecell.js"></script>
+    <script>
+      $(function () {
+        // Make *any* div with class 'compute' a Sage cell
+        sagecell.makeSagecell({
+          inputLocation: "div.compute",
+          template: sagecell.templates.minimal,
+          evalButtonText: "Launch the Interactive Applet Now",
+        });
+      });
+    </script>
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+        },
+        svg: {
+          fontCache: "global",
+        },
+      };
+    </script>
+    <script
+      type="text/javascript"
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+    ></script>
+  </head>
+  <body style="width: 1000px">
+<h1>Modular Forms Interactive Plots</h1>
+<h2>Partition Function</h2>
+<div class="compute"> <!--Do not make this indented;it will fail.-->
+<script type="text/x-sage">
+import numpy as np
+def p(x):
+    n = floor(x)
+    return Partitions(n).cardinality()
+@interact
+def plot_partitions(X=slider([10,100,500,1000], label = r"$[0,X]$"),α = slider(range(1,11), label= r"$\alpha$"), frame1 = checkbox(False, label= r'$x^{\alpha}$')):
+    alpha = α
+    def power_alpha(x):
+        return x^alpha
+    p1 = list_plot( [p(n) for n in range(X+1)], legend_label = "p(n)")
+    if frame1 == True:
+        p1+= plot(power_alpha,(x,0,X), legend_label = r"$x^{\alpha},\alpha =$" + "{}".format(alpha),color = "red")
+    p1.show()   
+</script>
+</div>
+<h2>Size of $M_{k}(N)$</h2>
+<div class="compute"> <!--Do not make this indented;it will fail.-->
+<script type="text/x-sage">
+from sage.modular.dims import dimension_modular_forms
+import numpy as np
+@interact
+def size_of_M(N = input_box(1, label="N"), K = slider([10,20,30,40,40])):
+  if N == 0:
+    print("Please choose a non-zero integer.")
+    return s
+  def dim(k):
+    return dimension_modular_forms(Gamma0(N),k)
+  p1 = list_plot([dim(k) for k in range(K)])
+  p1.show()   
+</script>
+</div>
+<h2>Partition Function Part 2</h2>
+<div class="compute"> <!--Do not make this indented;it will fail.-->
+<script type="text/x-sage">
+import numpy as np
+def p(x):
+    n = floor(x)
+    return Partitions(n).cardinality()
+def est(x):
+  return (1/(4*x*sqrt(3)))*exp(pi*sqrt(2*x/3))
+@interact
+def plot_partitions(X=slider([10,100,500,1000], label = r"$[0,X]$"), frame1 = checkbox(False, label= r'$\frac{1}{4n \sqrt{3}}\exp\Big(\pi \sqrt{\frac{2n}{3}}\Big)$')):
+    p1 = list_plot( [p(n) for n in range(X+1)], legend_label = "p(n)")
+    if frame1 == True:
+        p1+= plot(est,(x,0,X), legend_label = r'$\frac{1}{4n \sqrt{3}}\exp(\pi \sqrt{\frac{2n}{3}})$',color = "red")
+    p1.show()   
+</script>
+</div>
+</body>
+</html>
+
+
+
+
+
+
