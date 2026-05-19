@@ -277,3 +277,8 @@ h3{
     margin: 10px auto; 
   }
 }
+.no-bullets {
+  list-style-type: none; /* Removes the bullet points or numbers */
+  padding: 0;            /* Removes default indentation */
+  margin: 0;             /* Removes default spacing */
+}
