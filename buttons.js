@@ -8,6 +8,6 @@ function switchintro() {
     document.getElementById("intro_pic").src = intro_gifs[ind];
 }
 function email() {
-    navigator.clipboard.writeText("ccasillo49@gatech.edu");
-    alert("The email address (ccasillo49@gatech.edu) of Cruz Castillo has been copied to your clipboard!");
+    navigator.clipboard.writeText("ccastillo49@gatech.edu");
+    alert("The email address (ccastillo49@gatech.edu) of Cruz Castillo has been copied to your clipboard!");
 }
